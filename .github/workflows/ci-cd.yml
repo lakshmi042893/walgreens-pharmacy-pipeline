@@ -1,0 +1,48 @@
+name: Walgreens Pharmacy Pipeline CI/CD
+
+on:
+  push:
+    branches: [dev, preprod, main]
+  pull_request:
+    branches: [preprod, main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+
+      - name: Configure Databricks CLI
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks configure --token <<EOF
+          $DATABRICKS_HOST
+          $DATABRICKS_TOKEN
+          EOF
+
+      - name: Set environment
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+          elif [ "${{ github.ref_name }}" == "preprod" ]; then
+            echo "ENV=preprod" >> $GITHUB_ENV
+          else
+            echo "ENV=dev" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy notebooks
+        run: |
+          databricks workspace import_dir notebooks \
+            /Workspace/
