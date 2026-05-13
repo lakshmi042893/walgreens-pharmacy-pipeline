@@ -46,13 +46,13 @@ jobs:
         run: |
           databricks workspace import_dir walgreens-pharmacy-pipeline/notebooks \
             /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/notebooks \
-            --overwrite
+            --overwrite true
 
       - name: Deploy utils
         run: |
           databricks workspace import_dir walgreens-pharmacy-pipeline/utils \
             /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/utils \
-            --overwrite
+            --overwrite true
 
       - name: Run Bronze notebook
         run: |
