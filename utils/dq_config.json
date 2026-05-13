@@ -1,0 +1,32 @@
+{
+    "bronze": {
+        "table": "pharmacy_raw",
+        "min_rows": 10,
+        "max_rows": 10000,
+        "critical_columns": ["sale_id", "store_id", "drug_id", "quantity", "unit_price"],
+        "valid_values": {
+            "category": ["OTC", "Prescription"],
+            "region": ["North", "South", "East", "West"]
+        }
+    },
+    "silver": {
+        "table": "pharmacy_clean",
+        "min_retention_rate": 70,
+        "critical_columns": ["sale_id", "store_id", "drug_id", "total_amount"],
+        "valid_values": {
+            "sale_priority": ["Critical", "High", "Normal"],
+            "category": ["OTC", "Prescription"]
+        },
+        "business_logic": {
+            "is_high_value_threshold": 300
+        }
+    },
+    "gold": {
+        "tables": ["fact_sales", "dim_stores", "dim_drugs"],
+        "fact_table": "fact_sales",
+        "join_keys": {
+            "dim_stores": "store_id",
+            "dim_drugs": "drug_id"
+        }
+    }
+}
