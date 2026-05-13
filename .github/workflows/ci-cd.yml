@@ -44,5 +44,19 @@ jobs:
 
       - name: Deploy notebooks
         run: |
-          databricks workspace import_dir notebooks \
-            /Workspace/
+          databricks workspace import_dir walgreens-pharmacy-pipeline/notebooks \
+            /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/notebooks \
+            --overwrite
+
+      - name: Deploy utils
+        run: |
+          databricks workspace import_dir walgreens-pharmacy-pipeline/utils \
+            /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/utils \
+            --overwrite
+
+      - name: Run Bronze notebook
+        run: |
+          databricks runs submit --wait \
+            --existing-cluster-id ${{ secrets.DATABRICKS_CLUSTER_ID }} \
+            --notebook-task \
+            "{\"notebook_path\": \"/Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/notebooks/01_bronze_pharmacy\", \"base_parameters\": {\"environment\": \"$ENV\"}}"
