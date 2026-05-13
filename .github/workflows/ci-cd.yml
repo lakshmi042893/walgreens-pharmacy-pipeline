@@ -20,17 +20,14 @@ jobs:
           python-version: '3.9'
 
       - name: Install Databricks CLI
-        run: pip install databricks-cli
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
       - name: Configure Databricks CLI
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks configure --token <<EOF
-          $DATABRICKS_HOST
-          $DATABRICKS_TOKEN
-          EOF
+          echo "[DEFAULT]
+          host = ${{ secrets.DATABRICKS_HOST }}
+          token = ${{ secrets.DATABRICKS_TOKEN }}" > ~/.databrickscfg
 
       - name: Set environment
         run: |
@@ -44,13 +41,13 @@ jobs:
 
       - name: Deploy notebooks
         run: |
-          databricks workspace import_dir walgreens-pharmacy-pipeline/notebooks \
+          databricks workspace import-dir walgreens-pharmacy-pipeline/notebooks \
             /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/notebooks \
             --overwrite
 
       - name: Deploy utils
         run: |
-          databricks workspace import_dir walgreens-pharmacy-pipeline/utils \
+          databricks workspace import-dir walgreens-pharmacy-pipeline/utils \
             /Workspace/Users/lakshmisas96@gmail.com/walgreens-pharmacy-pipeline/walgreens-pharmacy-pipeline/utils \
             --overwrite
 
